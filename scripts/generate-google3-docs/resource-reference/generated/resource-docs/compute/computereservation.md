@@ -79,6 +79,17 @@
 ```yaml
 description: string
 resourceID: string
+shareSettings:
+  projectMap:
+  - keyRef:
+      external: string
+      name: string
+      namespace: string
+    projectIDRef:
+      external: string
+      name: string
+      namespace: string
+  shareType: string
 specificReservation:
   count: integer
   inUseCount: integer
@@ -120,6 +131,126 @@ zone: string
         <td>
             <p><code class="apitype">string</code></p>
             <p>{% verbatim %}Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.{% endverbatim %}</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p><code>shareSettings</code></p>
+            <p><i>Optional</i></p>
+        </td>
+        <td>
+            <p><code class="apitype">object</code></p>
+            <p>{% verbatim %}The share setting for reservations.{% endverbatim %}</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p><code>shareSettings.projectMap</code></p>
+            <p><i>Optional</i></p>
+        </td>
+        <td>
+            <p><code class="apitype">list (object)</code></p>
+            <p>{% verbatim %}A map of project id and project config. This is only valid when shareType's value is SPECIFIC_PROJECTS.{% endverbatim %}</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p><code>shareSettings.projectMap[]</code></p>
+            <p><i>Optional</i></p>
+        </td>
+        <td>
+            <p><code class="apitype">object</code></p>
+            <p>{% verbatim %}{% endverbatim %}</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p><code>shareSettings.projectMap[].keyRef</code></p>
+            <p><i>Required*</i></p>
+        </td>
+        <td>
+            <p><code class="apitype">object</code></p>
+            <p>{% verbatim %}The key of this project config in the parent map.{% endverbatim %}</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p><code>shareSettings.projectMap[].keyRef.external</code></p>
+            <p><i>Optional</i></p>
+        </td>
+        <td>
+            <p><code class="apitype">string</code></p>
+            <p>{% verbatim %}Allowed value: The `name` field of a `Project` resource.{% endverbatim %}</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p><code>shareSettings.projectMap[].keyRef.name</code></p>
+            <p><i>Optional</i></p>
+        </td>
+        <td>
+            <p><code class="apitype">string</code></p>
+            <p>{% verbatim %}Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names{% endverbatim %}</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p><code>shareSettings.projectMap[].keyRef.namespace</code></p>
+            <p><i>Optional</i></p>
+        </td>
+        <td>
+            <p><code class="apitype">string</code></p>
+            <p>{% verbatim %}Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/{% endverbatim %}</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p><code>shareSettings.projectMap[].projectIDRef</code></p>
+            <p><i>Optional</i></p>
+        </td>
+        <td>
+            <p><code class="apitype">object</code></p>
+            <p>{% verbatim %}The project id, should be the same as the key of this project config in the project map.{% endverbatim %}</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p><code>shareSettings.projectMap[].projectIDRef.external</code></p>
+            <p><i>Optional</i></p>
+        </td>
+        <td>
+            <p><code class="apitype">string</code></p>
+            <p>{% verbatim %}Allowed value: The `name` field of a `Project` resource.{% endverbatim %}</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p><code>shareSettings.projectMap[].projectIDRef.name</code></p>
+            <p><i>Optional</i></p>
+        </td>
+        <td>
+            <p><code class="apitype">string</code></p>
+            <p>{% verbatim %}Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names{% endverbatim %}</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p><code>shareSettings.projectMap[].projectIDRef.namespace</code></p>
+            <p><i>Optional</i></p>
+        </td>
+        <td>
+            <p><code class="apitype">string</code></p>
+            <p>{% verbatim %}Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/{% endverbatim %}</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p><code>shareSettings.shareType</code></p>
+            <p><i>Optional</i></p>
+        </td>
+        <td>
+            <p><code class="apitype">string</code></p>
+            <p>{% verbatim %}Immutable. Type of sharing for this shared-reservation. Possible values: ["LOCAL", "ORGANIZATION", "SPECIFIC_PROJECTS"].{% endverbatim %}</p>
         </td>
     </tr>
     <tr>
@@ -441,6 +572,47 @@ spec:
     instanceProperties:
       machineType: n1-standard-1
       minCpuPlatform: "Intel Sandy Bridge"
+```
+
+### Shared Compute Reservation
+```yaml
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeReservation
+metadata:
+  annotations:
+    # replace ${TEST_SHARED_RESERVATIONS_PROJECT?} with the project within the shared reservations owner projects
+    # (compute.sharedReservationsOwnerProjects) organization policy constraint
+    # See https://docs.cloud.google.com/compute/docs/instances/manage-shared-reservations-creation#allow-restrict-projects
+    cnrm.cloud.google.com/project-id: ${TEST_SHARED_RESERVATIONS_PROJECT?}
+  name: computereservation-sample-shared
+spec:
+  description: Shared Reservation for 1 machines which will be shared with other projects.
+  zone: us-central1-a
+  shareSettings:
+    shareType: SPECIFIC_PROJECTS
+    projectMap:
+    - keyRef:
+        external: ${PROJECT_ID?}
+      projectIDRef:
+        external: ${PROJECT_ID?}
+  specificReservation:
+    count: 1
+    instanceProperties:
+      machineType: n1-standard-1
 ```
 
 ### Specialized Compute Reservation

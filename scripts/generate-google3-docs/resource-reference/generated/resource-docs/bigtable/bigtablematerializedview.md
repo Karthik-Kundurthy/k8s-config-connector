@@ -2,9 +2,8 @@
 
 {% extends "config-connector/_base.html" %}
 
-{% block page_title %}TagsTagValue{% endblock %}
+{% block page_title %}BigtableMaterializedView{% endblock %}
 {% block body %}
-
 
 
 <table>
@@ -17,31 +16,31 @@
 <tbody>
 <tr>
 <td>{{gcp_name_short}} Service Name</td>
-<td>Cloud Resource Manager</td>
+<td>Cloud Bigtable</td>
 </tr>
 <tr>
 <td>{{gcp_name_short}} Service Documentation</td>
-<td><a href="/resource-manager/docs/tags/tags-overview">/resource-manager/docs/tags/tags-overview</a></td>
+<td><a href="/bigtable/docs/">/bigtable/docs/</a></td>
 </tr>
 <tr>
 <td>{{gcp_name_short}} REST Resource Name</td>
-<td>v3.tagValues</td>
+<td>bigtableadmin/v2/projects.instances.materializedViews</td>
 </tr>
 <tr>
 <td>{{gcp_name_short}} REST Resource Documentation</td>
-<td><a href="/resource-manager/reference/rest/v3/tagValues">/resource-manager/reference/rest/v3/tagValues</a></td>
+<td><a href="/bigtable/docs/reference/admin/rest/v2/projects.instances.materializedViews">/bigtable/docs/reference/admin/rest/v2/projects.instances.materializedViews</a></td>
 </tr>
 <tr>
 <td>{{product_name_short}} Resource Short Names</td>
-<td>gcptagstagvalue<br>gcptagstagvalues<br>tagstagvalue</td>
+<td>gcpbigtablematerializedview<br>gcpbigtablematerializedviews<br>bigtablematerializedview</td>
 </tr>
 <tr>
 <td>{{product_name_short}} Service Name</td>
-<td>cloudresourcemanager.googleapis.com</td>
+<td>bigtableadmin.googleapis.com</td>
 </tr>
 <tr>
 <td>{{product_name_short}} Resource Fully Qualified Name</td>
-<td>tagstagvalues.tags.cnrm.cloud.google.com</td>
+<td>bigtablematerializedviews.bigtable.cnrm.cloud.google.com</td>
 </tr>
 
 <tr>
@@ -64,13 +63,13 @@
 ### Spec
 #### Schema
 ```yaml
-description: string
-parentRef:
+deletionProtection: boolean
+instanceRef:
   external: string
   name: string
   namespace: string
+query: string
 resourceID: string
-shortName: string
 ```
 
 <table class="properties responsive">
@@ -82,55 +81,62 @@ shortName: string
 <tbody>
     <tr>
         <td>
-            <p><code>description</code></p>
+            <p><code>deletionProtection</code></p>
             <p><i>Optional</i></p>
         </td>
         <td>
-            <p><code class="apitype">string</code></p>
-            <p>{% verbatim %}Optional. User-assigned description of the TagValue.
- Must not exceed 256 characters.
-
- Read-write.{% endverbatim %}</p>
+            <p><code class="apitype">boolean</code></p>
+            <p>{% verbatim %}Optional. Set to true to make the MaterializedView protected against deletion.{% endverbatim %}</p>
         </td>
     </tr>
     <tr>
         <td>
-            <p><code>parentRef</code></p>
-            <p><i>Required</i></p>
+            <p><code>instanceRef</code></p>
+            <p><i>Optional</i></p>
         </td>
         <td>
             <p><code class="apitype">object</code></p>
-            <p>{% verbatim %}Immutable. The TagValue's parent TagKey.{% endverbatim %}</p>
+            <p>{% verbatim %}InstanceRef defines the resource reference to BigtableInstance, which "External" field holds the GCP identifier for the KRM object.{% endverbatim %}</p>
         </td>
     </tr>
     <tr>
         <td>
-            <p><code>parentRef.external</code></p>
+            <p><code>instanceRef.external</code></p>
             <p><i>Optional</i></p>
         </td>
         <td>
             <p><code class="apitype">string</code></p>
-            <p>{% verbatim %}A reference to an externally managed TagsTagKey resource. Should be in the format "tagKeys/{{tagKeyID}}".{% endverbatim %}</p>
+            <p>{% verbatim %}A reference to an externally managed BigtableInstance resource.{% endverbatim %}</p>
         </td>
     </tr>
     <tr>
         <td>
-            <p><code>parentRef.name</code></p>
+            <p><code>instanceRef.name</code></p>
             <p><i>Optional</i></p>
         </td>
         <td>
             <p><code class="apitype">string</code></p>
-            <p>{% verbatim %}The name of a TagsTagKey resource.{% endverbatim %}</p>
+            <p>{% verbatim %}The name of a BigtableInstance resource.{% endverbatim %}</p>
         </td>
     </tr>
     <tr>
         <td>
-            <p><code>parentRef.namespace</code></p>
+            <p><code>instanceRef.namespace</code></p>
             <p><i>Optional</i></p>
         </td>
         <td>
             <p><code class="apitype">string</code></p>
-            <p>{% verbatim %}The namespace of a TagsTagKey resource.{% endverbatim %}</p>
+            <p>{% verbatim %}The namespace of a BigtableInstance resource.{% endverbatim %}</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p><code>query</code></p>
+            <p><i>Optional</i></p>
+        </td>
+        <td>
+            <p><code class="apitype">string</code></p>
+            <p>{% verbatim %}Immutable. MaterializedView's select query.{% endverbatim %}</p>
         </td>
     </tr>
     <tr>
@@ -140,22 +146,7 @@ shortName: string
         </td>
         <td>
             <p><code class="apitype">string</code></p>
-            <p>{% verbatim %}Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.{% endverbatim %}</p>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <p><code>shortName</code></p>
-            <p><i>Required</i></p>
-        </td>
-        <td>
-            <p><code class="apitype">string</code></p>
-            <p>{% verbatim %}Required. Immutable. User-assigned short name for TagValue. The short name
- should be unique for TagValues within the same parent TagKey.
-
- The short name must be 63 characters or less, beginning and ending with
- an alphanumeric character ([a-z0-9A-Z]) with dashes (-), underscores (_),
- dots (.), and alphanumerics between.{% endverbatim %}</p>
+            <p>{% verbatim %}The BigtableMaterializedView name. If not given, the metadata.name will be used.{% endverbatim %}</p>
         </td>
     </tr>
 </tbody>
@@ -172,12 +163,10 @@ conditions:
   reason: string
   status: string
   type: string
-createTime: string
 externalRef: string
 name: string
-namespacedName: string
 observedGeneration: integer
-updateTime: string
+observedState: {}
 ```
 
 <table class="properties responsive">
@@ -237,31 +226,17 @@ updateTime: string
         </td>
     </tr>
     <tr>
-        <td><code>createTime</code></td>
-        <td>
-            <p><code class="apitype">string</code></p>
-            <p>{% verbatim %}Output only. Creation time.{% endverbatim %}</p>
-        </td>
-    </tr>
-    <tr>
         <td><code>externalRef</code></td>
         <td>
             <p><code class="apitype">string</code></p>
-            <p>{% verbatim %}A unique specifier for the TagsTagValue resource in GCP.{% endverbatim %}</p>
+            <p>{% verbatim %}A unique specifier for the BigtableMaterializedView resource in GCP.{% endverbatim %}</p>
         </td>
     </tr>
     <tr>
         <td><code>name</code></td>
         <td>
             <p><code class="apitype">string</code></p>
-            <p>{% verbatim %}Immutable. Resource name for TagValue in the format `tagValues/456`.{% endverbatim %}</p>
-        </td>
-    </tr>
-    <tr>
-        <td><code>namespacedName</code></td>
-        <td>
-            <p><code class="apitype">string</code></p>
-            <p>{% verbatim %}Output only. The namespaced name of the TagValue. Can be in the form `{organization_id}/{tag_key_short_name}/{tag_value_short_name}` or `{project_id}/{tag_key_short_name}/{tag_value_short_name}` or `{project_number}/{tag_key_short_name}/{tag_value_short_name}`.{% endverbatim %}</p>
+            <p>{% verbatim %}The unique name of the BigtableMaterializedView. Values are of the form `projects/{project}/instances/{instance}/materializedViews/{materializedViewID}`.{% endverbatim %}</p>
         </td>
     </tr>
     <tr>
@@ -272,10 +247,10 @@ updateTime: string
         </td>
     </tr>
     <tr>
-        <td><code>updateTime</code></td>
+        <td><code>observedState</code></td>
         <td>
-            <p><code class="apitype">string</code></p>
-            <p>{% verbatim %}Output only. Update time.{% endverbatim %}</p>
+            <p><code class="apitype">object</code></p>
+            <p>{% verbatim %}ObservedState is the state of the resource as most recently observed in GCP.{% endverbatim %}</p>
         </td>
     </tr>
 </tbody>
@@ -285,15 +260,51 @@ updateTime: string
 
 ### Typical Use Case
 ```yaml
-apiVersion: tags.cnrm.cloud.google.com/v1beta1
-kind: TagsTagValue
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: bigtable.cnrm.cloud.google.com/v1beta1
+kind: BigtableMaterializedView
 metadata:
-  name: tagstagvalue-${uniqueId}
+  name: bigtablematerializedview-sample
 spec:
-  description: For valuename resources.
-  parentRef:
-    name: tagstagkey-${uniqueId}
-  shortName: valuename
+  instanceRef:
+    name: bigtablematerializedview-dep
+  query: "SELECT _key, COUNT(*) as count from `table-sample` group by _key;"
+  deletionProtection: true
+---
+apiVersion: bigtable.cnrm.cloud.google.com/v1beta1
+kind: BigtableInstance
+metadata:
+  name: bigtablematerializedview-dep
+spec:
+  displayName: Sample Instance for Materialized View
+  cluster:
+  - clusterId: cluster-1
+    zone: us-central1-a
+    numNodes: 1
+    storageType: SSD
+---
+apiVersion: bigtable.cnrm.cloud.google.com/v1beta1
+kind: BigtableTable
+metadata:
+  name: table-sample
+spec:
+  instanceRef:
+    name: bigtablematerializedview-dep
+  columnFamily:
+  - family: family1
 ```
 
 
